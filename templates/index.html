@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="row">
+	<div class="col-md-12">
+		{% if size == 'big'%}
+		<a href="/">View thumbnails</a>
+		{% else %} 
+		<a href="/?size=big">View large photos</a>
+		{% endif %}
+
+		<hr>
+
+        {% if feed_data %}
+            {% for item in feed_data %}
+                {% if size == 'big'%}
+                <p>
+                    <img src="{{item.images['standard_resolution']['url']}}" alt="{{item.caption.text}}">
+                    <br>
+                    {{item.caption.text}}
+                    <br>
+                    <small><a href="{{item.link}}">view on instagram</a></small>
+                </p>
+                {% else %}
+                    <div class="col-sm-6 col-md-2">
+                        <a href="{{item.link}}" class="thumbnail">
+                            <img src="{{item.thumbnail_link}}" alt="{{item.caption.text}}">
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>No feed data for {{ instagram_user_id }}</p>
+        {% endif %}
+	</div>
+</div>
+
+{% endblock %}
