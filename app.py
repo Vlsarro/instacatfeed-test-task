@@ -6,7 +6,7 @@ from instagram_api import instagram_web_api_client
 from models import process_feed_data, load_instagram_user_data
 from util import get_exc_data
 
-# TODO: add caching, add logging insted of print expressions, add loading images from accounts that user is following
+# TODO: add caching, add logging instead of print expressions, add loading images from accounts that user is following
 # expand custom exceptions and their handling, add tests
 
 app = Flask(__name__, template_folder=config.TEMPLATES_PATH)
