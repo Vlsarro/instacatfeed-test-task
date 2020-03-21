@@ -1,6 +1,8 @@
 import os
 import pathlib
 import config
+
+from cat_classifier import CatPipeline
 from util import get_exc_data, save_file_from_url
 
 
@@ -66,6 +68,7 @@ class FeedItem:
         return result
 
     def _save_video(self) -> bool:
+        # TODO: implement video saving
         result = False
         return result
 
@@ -73,10 +76,23 @@ class FeedItem:
         return f'{self.id}|{self.link}|{self.user["username"]}'
 
 
-def process_feed_data(feed_data: list) -> list:
+# Cat classifier
+
+cat_classifier = CatPipeline()
+
+
+def process_feed_data(user_id: int, feed_data: list) -> list:
     processed_data = []
     for item in feed_data:
         feed_item = FeedItem(item)
         feed_item.save_media()
         processed_data.append(feed_item)
-    return processed_data
+
+    classification_result = cat_classifier.run(get_user_media_path(str(user_id)))
+
+    processed_data_with_cats = []
+    for item in processed_data:
+        if classification_result[item.id]:
+            processed_data_with_cats.append(item)
+
+    return processed_data_with_cats
