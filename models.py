@@ -1,12 +1,14 @@
 import os
+import json
 import pathlib
 import config
 
 from cat_classifier import CatPipeline
+from exc import JSONFileInvalidFormatException, JSONFileLoadingException
 from util import get_exc_data, save_file_from_url
 
 
-__all__ = ('FeedItem', 'process_feed_data')
+__all__ = ('FeedItem', 'process_feed_data', 'load_instagram_user_data')
 
 
 def get_user_media_path(user_id):
@@ -52,7 +54,7 @@ class FeedItem:
                 self.user_media_path = get_user_media_path(self.user['id'])
                 pathlib.Path(self.user_media_path).mkdir(exist_ok=True, parents=True)
                 file_path = pathlib.Path(os.path.join(self.user_media_path, self.id))
-                if not (file_path.exists() or file_path.is_file()):
+                if not (file_path.exists() and file_path.is_file()):
                     try:
                         file_path.touch()
                     except FileExistsError:
@@ -69,8 +71,7 @@ class FeedItem:
 
     def _save_video(self) -> bool:
         # TODO: implement video saving
-        result = False
-        return result
+        raise NotImplementedError()
 
     def __str__(self):
         return f'{self.id}|{self.link}|{self.user["username"]}'
@@ -85,14 +86,43 @@ def process_feed_data(user_id: int, feed_data: list) -> list:
     processed_data = []
     for item in feed_data:
         feed_item = FeedItem(item)
-        feed_item.save_media()
-        processed_data.append(feed_item)
+        try:
+            feed_item.save_media()
+        except NotImplementedError:
+            print(get_exc_data())
+        else:
+            processed_data.append(feed_item)
 
     classification_result = cat_classifier.run(get_user_media_path(str(user_id)))
 
     processed_data_with_cats = []
     for item in processed_data:
-        if classification_result[item.id]:
-            processed_data_with_cats.append(item)
+        try:
+            is_cat = classification_result[item.id]
+        except KeyError:
+            print(f'Classification mismatch, id: {item.id}')
+        else:
+            if is_cat:
+                processed_data_with_cats.append(item)
 
     return processed_data_with_cats
+
+
+def load_instagram_user_data(filepath: str) -> int:
+    """
+    The input is expected to be a JSON file of the following format:
+    {"instagramUserId": 1233434543534}
+
+    :param filepath: JSON file path
+    :return: id of Instagram user
+    """
+    try:
+        with open(filepath) as f:
+            data = json.load(f)
+            return data['instagramUserId']
+    except KeyError as e:
+        raise JSONFileInvalidFormatException(f'Invalid key: {str(e)}')
+    except (ValueError, FileNotFoundError) as e:
+        raise JSONFileLoadingException(str(e))
+    except Exception:
+        raise
