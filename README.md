@@ -12,7 +12,7 @@ pip install -r requirements.txt
 ```
 
 #### Usage
-Create `user_data.json` file to set Instagram user id (you can find it out by account name using some tools like here https://codeofaninja.com/tools/find-instagram-user-id). For example:
+Create `user_data.json` file to set Instagram user id (you can find it out by account name using some tools like here https://codeofaninja.com/tools/find-instagram-user-id). Use following format:
 ```json
 {"instagramUserI": 1403410255}
 ```
