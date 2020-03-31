@@ -19,8 +19,4 @@ Create `user_data.json` file to set Instagram user id (you can find it out by ac
 Use python to run the application.
 ```bash
 python app.py
-```
-#### Additional comments
-I did not have enough time to implement all the functionality from the task. I need to add caching, add logging instead of print expressions, add loading images from accounts that user is following. I also should write some tests for this application.
-
-Currently this application only supports image filtration from the account specified in `user_data.json`.  
+```  
