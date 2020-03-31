@@ -1,9 +1,9 @@
-# Instagram cat feed test task
-Web client for instagram feed which shows media that has cats in it
+# Instagram feed smart filter
+Web client for instagram feed which shows media that has filtered objects in it (currently only cats)
 ### Installation and Usage:
 Before anything you can clone the repository using:
 ```
-git clone https://github.com/Vlsarro/instacatfeed-test-task
+git clone https://github.com/Vlsarro/instafeed-smart-filter
 ```
 #### Install required packages
 Install packages from requirements to start the application
